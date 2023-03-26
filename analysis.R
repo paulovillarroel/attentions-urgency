@@ -6,12 +6,20 @@ library(janitor)
 
 url <- "https://repositoriodeis.minsal.cl/SistemaAtencionesUrgencia/AtencionesUrgencia2023.zip"
 
-download.file(url, destfile = "data_raw/AtencionesUrgencia2023.zip")
+download.file(url, destfile = "raw_data/AtencionesUrgencia2023.zip")
 
-unzip("data_raw/AtencionesUrgencia2023.zip", exdir = "data_raw/")
+unzip("raw_data/AtencionesUrgencia2023.zip", exdir = "raw_data/")
 
-data <- data.table::fread("data_raw/AtencionesUrgencia2023.csv", encoding = "Latin-1") |>
+data <- data.table::fread("raw_data/AtencionesUrgencia2023.csv", encoding = "Latin-1") |>
   clean_names()
+
+
+# Remove the files
+
+unlink("raw_data/*")
+
+
+# Resume data
 
 respiratory_cause <- data |>
   filter(
@@ -20,6 +28,7 @@ respiratory_cause <- data |>
   ) |>
   group_by(semana) |>
   summarise(total = sum(total))
+
 
 # Plot
 
@@ -50,4 +59,4 @@ respiratory_cause |>
     axis.ticks = element_blank()
   )
 
-ggsave("plots/respiratory_cause_2023.png", height = 17, width = 23, units = "cm")
+ggsave("plots/respiratory_cause_2023.png", height = 9, width = 13)
